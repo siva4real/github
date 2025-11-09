@@ -14,16 +14,17 @@ This repository demonstrates a comprehensive GitHub Actions workflow using matri
 The workflow runs on the following matrix:
 
 | Operating System | Node.js Versions |
-|-----------------|------------------|
-| Ubuntu Latest   | 16, 18, 20       |
-| macOS Latest    | 18, 20           |
-| Windows Latest  | 18, 20           |
+| ---------------- | ---------------- |
+| Ubuntu Latest    | 16, 18, 20       |
+| macOS Latest     | 18, 20           |
+| Windows Latest   | 18, 20           |
 
 **Total Matrix Jobs**: 7 parallel builds
 
 ## 🔧 Workflow Details
 
 ### Triggers
+
 - Push to `main` or `master` branch
 - Pull requests to `main` or `master` branch
 - Manual workflow dispatch
@@ -31,6 +32,7 @@ The workflow runs on the following matrix:
 ### Build Artifacts
 
 Each matrix job generates:
+
 - `build-info.txt` - Detailed build information
 - `metadata.json` - JSON metadata about the build
 - `app.js` - Sample JavaScript output
@@ -48,12 +50,14 @@ Artifacts are named: `build-7da31e1-<os>-node<version>`
 ## 📦 Artifacts
 
 After a successful workflow run, you can download artifacts from:
+
 - GitHub Actions UI → Workflow run → Artifacts section
 - Each artifact contains complete build information and metadata
 
 ## 🎯 Validation
 
 This workflow meets all requirements:
+
 - ✅ At least 3 matrix variants (7 total)
 - ✅ Parallel execution of all jobs
 - ✅ Unique artifacts with prefix `build-7da31e1-`
@@ -62,7 +66,7 @@ This workflow meets all requirements:
 
 ## 📧 Contact
 
-**Email**: developer@example.com
+**Email**: 24f3004072@ds.study.iitm.ac.in
 
 ## 🛠️ Technologies
 
@@ -78,4 +82,3 @@ This is a demonstration project for DevOps CI/CD pipeline practices.
 
 **Repository**: GitHub Actions Matrix Build Demo  
 **Last Updated**: 2025-11-09
-
