@@ -1,0 +1,99 @@
+name: Multi-Platform Matrix Build
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  matrix-build:
+    name: Build on ${{ matrix.os }} with Node ${{ matrix.node-version }}
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node-version: [18, 20]
+        include:
+          - os: ubuntu-latest
+            node-version: 16
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: matrix-7da31e1
+        run: echo "Building for ${{ matrix.os }} with Node ${{ matrix.node-version }}"
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      - name: Get system information
+        id: sysinfo
+        run: |
+          echo "os_name=${{ matrix.os }}" >> $GITHUB_OUTPUT
+          echo "node_ver=${{ matrix.node-version }}" >> $GITHUB_OUTPUT
+          echo "timestamp=$(date -u +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
+        shell: bash
+      
+      - name: Generate build artifact
+        run: |
+          mkdir -p build-output
+          echo "Build Information" > build-output/build-info.txt
+          echo "==================" >> build-output/build-info.txt
+          echo "Operating System: ${{ matrix.os }}" >> build-output/build-info.txt
+          echo "Node Version: ${{ matrix.node-version }}" >> build-output/build-info.txt
+          echo "Build Time: $(date -u)" >> build-output/build-info.txt
+          echo "Runner: ${{ runner.name }}" >> build-output/build-info.txt
+          echo "Architecture: ${{ runner.arch }}" >> build-output/build-info.txt
+          echo "" >> build-output/build-info.txt
+          echo "Environment Details:" >> build-output/build-info.txt
+          echo "-------------------" >> build-output/build-info.txt
+          node --version >> build-output/build-info.txt
+          npm --version >> build-output/build-info.txt
+          echo "" >> build-output/build-info.txt
+          echo "Build completed successfully!" >> build-output/build-info.txt
+        shell: bash
+      
+      - name: Create JSON metadata
+        run: |
+          cat > build-output/metadata.json << 'EOF'
+          {
+            "os": "${{ matrix.os }}",
+            "node_version": "${{ matrix.node-version }}",
+            "build_time": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "workflow": "${{ github.workflow }}",
+            "run_id": "${{ github.run_id }}",
+            "run_number": "${{ github.run_number }}",
+            "sha": "${{ github.sha }}"
+          }
+          EOF
+        shell: bash
+      
+      - name: Create sample build output
+        run: |
+          echo "console.log('Built on ${{ matrix.os }} with Node ${{ matrix.node-version }}');" > build-output/app.js
+          node build-output/app.js
+        shell: bash
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-7da31e1-${{ matrix.os }}-node${{ matrix.node-version }}
+          path: build-output/
+          retention-days: 30
+          if-no-files-found: error
+      
+      - name: Verify artifact contents
+        run: |
+          echo "Artifact contents:"
+          ls -lah build-output/
+          echo ""
+          echo "Build info file:"
+          cat build-output/build-info.txt
+        shell: bash
+
